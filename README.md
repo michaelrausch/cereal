@@ -30,6 +30,7 @@ Cereal is a simple scripting language (currently in development) that supports:
 ```
 -- Constants Section
 DEF website "https://mkl.gg"
+DEF filename "output.html"
 
 -- Function Section
 FN search_website DO
@@ -38,6 +39,8 @@ FN search_website DO
         ABORT "Website does not contain $search_term"
     ENDIF
     PRINT "Website contains $search_term"
+    PRINT "Writing to file..."
+    !writef $filename $http_get_body
 ENDFN
 
 -- Main Section

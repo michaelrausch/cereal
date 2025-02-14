@@ -1,4 +1,5 @@
 DEF website "https://mkl.gg"
+DEF filename "output.html"
 
 FN search_website DO
     !httpget $website
@@ -6,6 +7,8 @@ FN search_website DO
         ABORT "Website does not contain $search_term"
     ENDIF
     PRINT "Website contains $search_term"
+    PRINT "Writing to file..."
+    !writef $filename $http_get_body
 ENDFN
 
 PRINT "Enter the search term to check at $website:"
