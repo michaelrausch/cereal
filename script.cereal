@@ -1,16 +1,13 @@
-DEF api_url "https://account.uconline.ac.nz/ee/api/reference_data/uconline_course"
+DEF website "https://mkl.gg"
 
-FN check_course_exists DO
-    !httpget $api_url
-
-    IF $http_get_body NOTCONTAINS $course_code
-        ABORT "Course does not exist"
+FN search_website DO
+    !httpget $website
+    IF $http_get_body NOTCONTAINS $search_term
+        ABORT "Website does not contain $search_term"
     ENDIF
-
-    PRINT Course exists
+    PRINT "Website contains $search_term"
 ENDFN
 
-PRINT "Enter the course code to check at $api_url:"
-INPUT "course_code"
-
-CALL check_course_exists
+PRINT "Enter the search term to check at $website:"
+INPUT search_term
+CALL search_website

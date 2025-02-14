@@ -25,20 +25,20 @@ Cereal is a simple scripting language (currently in development) that supports:
 ## Sample Program
 ```
 -- Constants Section
-DEF planet Earth
-DEF yes y
-DEF github_link https://github.com/michaelrausch
-DEF youtube_link https://youtube.com/michaelrausch
+DEF planet "Earth"
+DEF yes "y"
+DEF github_link "https://github.com/michaelrausch"
+DEF youtube_link "https://youtube.com/michaelrausch"
 
 -- Functions Section    
 FN print_hello_world DO
-    PRINT Name?
+    PRINT "Name?"
     INPUT name
-    PRINT Hello, $name! Welcome to planet $planet!
+    PRINT "Hello, $name! Welcome to planet $planet!"
 ENDFN
 
 FN ask_commit_changes DO 
-    PRINT Commit changes? (y/n)
+    PRINT "Commit changes? (y/n)"
     INPUT commit_changes
 
     -- Check if the user said yes
@@ -55,15 +55,15 @@ FN ask_commit_changes DO
 ENDFN
 
 FN do_a_http_request DO 
-    MOV r0 https://mkl.gg/
+    MOV r0 "https://mkl.gg/"
     LIBCALL httpget
 
     IF $http_get_body CONTAINS $github_link 
-        PRINT Website contains my github link
+        PRINT "Website contains my github link"
     ENDIF
 
     IF $http_get_body NOTCONTAINS $youtube_link
-        ABORT Website does not contain my youtube link
+        ABORT "Website does not contain my youtube link"
     ENDIF
 ENDFN
 
@@ -75,11 +75,11 @@ FN do_a_http_request_but_with_macros DO
     -- LIBCALL httpget
 
     IF $http_get_body CONTAINS $github_link 
-        PRINT Website contains my github link
+        PRINT "Website contains my github link"
     ENDIF
 
     IF $http_get_body NOTCONTAINS $youtube_link
-        ABORT Website does not contain my youtube link
+        ABORT "Website does not contain my youtube link"
     ENDIF
 ENDFN
 
