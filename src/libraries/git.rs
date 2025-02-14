@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use crate::command::ExecutionContext;
+use crate::{command::ExecutionContext, consts::Registers};
 
 
 pub struct Git {}
@@ -13,11 +13,11 @@ impl Git {
 
 impl Git {
     pub fn execute(&self, context: &mut ExecutionContext) -> Result<(), String> {
-        let command = context.variables.get("r0").unwrap();
+        let command = context.variables.get(Registers::R0).unwrap();
         let default_args = String::new();
 
         // Get the git command from r0 and arguments from r1
-        let args = context.variables.get("r1").unwrap_or(&default_args);
+        let args = context.variables.get(Registers::R1).unwrap_or(&default_args);
 
         // Ensure both command and args are not empty
         if command.is_empty() {

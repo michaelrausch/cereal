@@ -5,6 +5,7 @@ pub mod command;
 pub mod commands;
 pub mod libraries;
 pub mod vm;
+pub mod consts;
 
 #[cfg(test)]
 mod parser_test;

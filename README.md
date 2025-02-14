@@ -13,7 +13,10 @@ Run a Cereal script:
 ./cereal script.cereal
 ```
 
-If no script is specified, it will look for `script.cereal` in the current directory.
+Enter REPL mode:
+```bash
+./cereal
+```
 
 ## Language Features
 
