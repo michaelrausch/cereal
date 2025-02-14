@@ -1,52 +1,16 @@
--- Constants Section
-DEF planet Earth
-DEF yes y
-DEF github_link https://github.com/michaelrausch
-DEF youtube_link https://youtube.com/michaelrausch
+DEF api_url "https://account.uconline.ac.nz/ee/api/reference_data/uconline_course"
 
--- Functions Section    
-FN print_hello_world DO
-    PRINT Name?
-    INPUT name
-    PRINT Hello, $name! Welcome to planet $planet!
-ENDFN
+FN check_course_exists DO
+    !httpget $api_url
 
-FN ask_commit_changes DO 
-    PRINT Commit changes? (y/n)
-    INPUT commit_changes
-
-    -- Check if the user said yes
-    IF $commit_changes IS $yes
-        PRINT Commiting changes
-        -- Library methods can (currently) be called
-        -- by using the LIBCALL keyword. Arguments 
-        -- are passed in registers.
-        MOV r0 status
-        MOV r1 .
-        LIBCALL git
-        PRINT $exec_stdout
-    ENDIF
-ENDFN
-
-FN do_a_http_request DO 
-    -- As of 1.0.8, you can use a !macro to call a library method.
-    -- so you can do: !httpget https://mkl.gg/ and this will expand to
-    -- MOV r0 https://mkl.gg/
-    -- LIBCALL httpget
-    MOV r0 https://mkl.gg/
-    LIBCALL httpget
-
-    IF $http_get_body CONTAINS $github_link 
-        PRINT Website contains my github link
+    IF $http_get_body NOTCONTAINS $course_code
+        ABORT "Course does not exist"
     ENDIF
 
-    IF $http_get_body CONTAINS $youtube_link
-        ABORT Website does not contain my youtube link
-    ENDIF
+    PRINT Course exists
 ENDFN
 
--- Main Section
-CALL print_hello_world
-CALL ask_commit_changes
-CALL do_a_http_request
+PRINT "Enter the course code to check at $api_url:"
+INPUT "course_code"
 
+CALL check_course_exists

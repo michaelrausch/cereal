@@ -46,7 +46,7 @@ mod tests {
     #[test]
     fn test_macro_expansion() {
         let mut parser = Parser::new();
-        let result = parser.parse_line("$httpget https://example.com").unwrap().unwrap();
+        let result = parser.parse_line("!httpget \"https://example.com\"").unwrap().unwrap();
         
         // Macro should expand to a MultiCommand
         assert_eq!(result.name(), "MULTI");
@@ -69,7 +69,7 @@ mod tests {
         let mut parser = Parser::new();
         
         // Parse a command and check the stored arguments
-        parser.parse_line("MOV x 42").unwrap();
+        parser.parse_line("MOV x \"42\"").unwrap();
         let args = parser.get_last_args().unwrap();
         assert_eq!(args, vec!["MOV", "x", "42"]);
     }

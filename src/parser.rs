@@ -1,6 +1,9 @@
 use crate::commands::registry::CommandRegistry;
 use crate::commands::*;
 use crate::command::{Command, MultiCommand};
+use crate::lexer::{Lexer, Token, TokenType};
+use std::fs::OpenOptions;
+use std::io::Write;
 
 #[derive(Clone)]
 pub struct Parser {
@@ -39,27 +42,6 @@ impl Parser {
                 return Err("EXEC requires a command".to_string());
             }
             Ok(Box::new(ExecCommand::new(args.join(" "))))
-        });
-
-        registry.register("EQ", "EQ", |args| {
-            if args.len() != 2 {
-                return Err("EQ requires two arguments".to_string());
-            }
-            Ok(Box::new(EqCommand::new(args[0].to_string(), args[1].to_string())))
-        });
-
-        registry.register("NEQ", "NEQ", |args| {
-            if args.len() != 2 {
-                return Err("NEQ requires two arguments".to_string());
-            }
-            Ok(Box::new(NeqCommand::new(args[0].to_string(), args[1].to_string())))
-        });
-
-        registry.register("NPM", "NPM", |args| {
-            if args.is_empty() {
-                return Err("NPM requires a command".to_string());
-            }
-            Ok(Box::new(NpmCommand::new(args.join(" "))))
         });
 
         registry.register("FN", "FN", |args| {
@@ -108,32 +90,68 @@ impl Parser {
         self.current_line += 1;
         let line = line.trim();
         
-        if self.is_empty_or_comment(line) {
+        if line.is_empty() {
             return Ok(None);
         }
 
-        if line.starts_with('!') {
-            return self.parse_macro(line);
-        }
-
-        self.parse_regular_command(line)
-    }
-
-    fn is_empty_or_comment(&self, line: &str) -> bool {
-        line.is_empty() || line.starts_with("//") || line.starts_with("--")
-    }
-
-    fn parse_macro(&mut self, line: &str) -> Result<Option<Box<dyn Command>>, String> {
-        let tokens: Vec<&str> = line[1..].split_whitespace().collect();
-        if tokens.is_empty() {
-            return Err("Empty macro".to_string());
-        }
-
-        let macro_name = tokens[0];
-        let args = &tokens[1..];
+        let mut lexer = Lexer::new(line);
+        let tokens = lexer.tokenize()?;
         
+        // Log tokens to file
+        if let Ok(mut file) = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open("tokens.bin") 
+        {
+            if self.current_line == 0 {
+                writeln!(file, "SOF")
+                    .unwrap_or_else(|e| eprintln!("Failed to write SOF: {}", e));
+            }
+            // Write the value in each token
+            writeln!(file, "Line {}: {} -> Tokens: {:?}", 
+                self.current_line, line, tokens)
+                .unwrap_or_else(|e| eprintln!("Failed to write to tokens.txt: {}", e));
+        }
+
+        if tokens.is_empty() {
+            return Ok(None);
+        }
+
+        // Store tokens for later use
+        self.last_args = tokens.iter().map(|t| t.value.clone()).collect();
+ 
+        match &tokens[0].token_type {
+            TokenType::Macro => self.parse_macro(&tokens),
+            TokenType::Command => self.parse_command(&tokens),
+            _ => Err(format!("Expected command or macro, got {:?}", tokens[0].token_type)),
+        }
+    }
+
+    fn parse_command(&mut self, tokens: &[Token]) -> Result<Option<Box<dyn Command>>, String> {
+        let command_name = &tokens[0].value;
+        let args: Vec<&str> = tokens[1..]
+            .iter()
+            .map(|t| t.value.as_str())
+            .collect();
+
+        self.registry
+            .create_command(command_name, args)
+            .map(Some)
+    }
+
+    fn parse_macro(&mut self, tokens: &[Token]) -> Result<Option<Box<dyn Command>>, String> {
+        if tokens.len() < 2 {
+            return Err("Macro requires a name".to_string());
+        }
+
+        let macro_name = &tokens[1].value;
+        let args: Vec<&str> = tokens[2..]
+            .iter()
+            .map(|t| t.value.as_str())
+            .collect();
+
         let mut expanded_commands = Vec::new();
-        self.generate_mov_commands(args, &mut expanded_commands)?;
+        self.generate_mov_commands(&args, &mut expanded_commands)?;
         self.add_libcall_command(macro_name, &mut expanded_commands)?;
 
         Ok(Some(Box::new(MultiCommand::new(expanded_commands))))
@@ -163,21 +181,6 @@ impl Parser {
             commands.push(command);
         }
         Ok(())
-    }
-
-    fn parse_regular_command(&mut self, line: &str) -> Result<Option<Box<dyn Command>>, String> {
-        let tokens: Vec<&str> = line.split_whitespace().collect();
-        if tokens.is_empty() {
-            return Ok(None);
-        }
-
-        // Store the args for later use (including the command name)
-        self.last_args = tokens.iter().map(|s| s.to_string()).collect();
-        
-        // Only pass the arguments (without the command name) to create_command
-        self.registry
-            .create_command(tokens[0], tokens.to_vec())
-            .map(Some)
     }
 
     pub fn get_last_args(&self) -> Option<Vec<String>> {

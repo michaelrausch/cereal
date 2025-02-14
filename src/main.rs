@@ -5,6 +5,7 @@ mod parser;
 mod vm;
 use vm::VM;
 mod libraries;
+mod lexer;
 
 use std::env;
 use std::fs;

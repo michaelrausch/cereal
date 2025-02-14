@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use crate::command::Command;
-use crate::commands::{DefCommand, ExecCommand, NpmCommand, IfCommand, EndIfCommand, PrintCommand, AbortCommand};
+use crate::commands::{DefCommand, ExecCommand, IfCommand, EndIfCommand, PrintCommand, AbortCommand};
 
 
 // Create a wrapper struct that implements Clone
@@ -42,13 +42,6 @@ impl CommandRegistry {
             Ok(Box::new(ExecCommand::new(cmd)))
         });
 
-        registry.register("NPM", "NPM", |args| {
-            if args.is_empty() {
-                return Err("NPM requires a command".to_string());
-            }
-            Ok(Box::new(NpmCommand::new(args.join(" "))))
-        });
-
         registry.register("IF", "IF", |args| {
             if args.len() != 3 || (args[1] != "IS" && args[1] != "NOT" && args[1] != "CONTAINS" && args[1] != "NOTCONTAINS") {
                 return Err("IF requires a condition variable".to_string());
@@ -83,7 +76,7 @@ impl CommandRegistry {
 
     pub fn create_command(&self, name: &str, args: Vec<&str>) -> Result<Box<dyn Command>, String> {
         if let Some(factory) = self.factories.get(&name.to_uppercase()) {
-            let command_args = args[1..].to_vec();
+            let command_args = args.to_vec();
             (factory.create_fn)(command_args)
         } else {
             Err(format!("Unknown command: {}", name))

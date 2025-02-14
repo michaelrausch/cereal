@@ -24,13 +24,11 @@ jobs:
         toolchain: stable
         override: true
 
+    - name: Run tests
+      run: cargo test
+
     - name: Build Release
       run: cargo build --release
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16'
 
     - name: Release
       uses: softprops/action-gh-release@v1
