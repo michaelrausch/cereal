@@ -49,8 +49,6 @@ impl VM {
     }
 
     pub fn execute(&mut self) -> Result<(), String> {
-        println!("[VM] Executing loaded instructions\n");
-
         // First, collect all the commands and their args
         let mut command_data: Vec<(Box<dyn Command>, Vec<String>)> = Vec::new();
         for command in &self.commands {
