@@ -59,6 +59,10 @@ FN search_website DO
         ABORT "Website does not contain $search_term"
     ENDIF
     PRINT "Website contains $search_term"
+    PRINT "Writing to file..."
+    MOV r0 $filename
+    MOV r1 $http_get_body
+    LIBCALL writef
 ENDFN
 PRINT "Enter the search term to check at $website:"
 INPUT search_term
@@ -68,19 +72,24 @@ CALL search_website
 ### Parsed output:
 ```
 Line 1: DEF website "https://mkl.gg" -> Tokens: [Token { token_type: Command, value: "DEF" }, Token { token_type: Identifier, value: "website" }, Token { token_type: String, value: "https://mkl.gg" }]
-Line 2: FN search_website DO -> Tokens: [Token { token_type: Command, value: "FN" }, Token { token_type: Identifier, value: "search_website" }, Token { token_type: Identifier, value: "DO" }]
-Line 3: !httpget $website -> Tokens: [Token { token_type: Macro, value: "!" }, Token { token_type: Identifier, value: "httpget" }, Token { token_type: Variable, value: "$website" }]
-Line 4: MOV r0 $website -> Tokens: [Token { token_type: Command, value: "MOV" }, Token { token_type: Identifier, value: "r0" }, Token { token_type: Variable, value: "$website" }]
-Line 5: LIBCALL httpget -> Tokens: [Token { token_type: Command, value: "LIBCALL" }, Token { token_type: Identifier, value: "httpget" }]
-Line 6: IF $http_get_body NOTCONTAINS $search_term -> Tokens: [Token { token_type: Command, value: "IF" }, Token { token_type: Variable, value: "$http_get_body" }, Token { token_type: Identifier, value: "NOTCONTAINS" }, Token { token_type: Variable, value: "$search_term" }]
-Line 7: ABORT "Website does not contain $search_term" -> Tokens: [Token { token_type: Command, value: "ABORT" }, Token { token_type: String, value: "Website does not contain $search_term" }]
-Line 8: ENDIF -> Tokens: [Token { token_type: Command, value: "ENDIF" }]
-Line 9: PRINT "Website contains $search_term" -> Tokens: [Token { token_type: Command, value: "PRINT" }, Token { token_type: String, value: "Website contains $search_term" }]
-Line 10: ENDFN -> Tokens: [Token { token_type: Command, value: "ENDFN" }]
-Line 11: PRINT "Enter the search term to check at $website:" -> Tokens: [Token { token_type: Command, value: "PRINT" }, Token { token_type: String, value: "Enter the search term to check at $website:" }]
-Line 12: INPUT search_term -> Tokens: [Token { token_type: Command, value: "INPUT" }, Token { token_type: Identifier, value: "search_term" }]
-Line 13: CALL search_website -> Tokens: [Token { token_type: Command, value: "CALL" }, Token { token_type: Identifier, value: "search_website" }]
-
+Line 2: DEF filename "output.html" -> Tokens: [Token { token_type: Command, value: "DEF" }, Token { token_type: Identifier, value: "filename" }, Token { token_type: String, value: "output.html" }]
+Line 3: FN search_website DO -> Tokens: [Token { token_type: Command, value: "FN" }, Token { token_type: Identifier, value: "search_website" }, Token { token_type: Identifier, value: "DO" }]
+Line 4: !httpget $website -> Tokens: [Token { token_type: Macro, value: "!" }, Token { token_type: Identifier, value: "httpget" }, Token { token_type: Variable, value: "$website" }]
+Line 5: MOV r0 $website -> Tokens: [Token { token_type: Command, value: "MOV" }, Token { token_type: Identifier, value: "r0" }, Token { token_type: Variable, value: "$website" }]
+Line 6: LIBCALL httpget -> Tokens: [Token { token_type: Command, value: "LIBCALL" }, Token { token_type: Identifier, value: "httpget" }]
+Line 7: IF $http_get_body NOTCONTAINS $search_term -> Tokens: [Token { token_type: Command, value: "IF" }, Token { token_type: Variable, value: "$http_get_body" }, Token { token_type: Identifier, value: "NOTCONTAINS" }, Token { token_type: Variable, value: "$search_term" }]
+Line 8: ABORT "Website does not contain $search_term" -> Tokens: [Token { token_type: Command, value: "ABORT" }, Token { token_type: String, value: "Website does not contain $search_term" }]
+Line 9: ENDIF -> Tokens: [Token { token_type: Command, value: "ENDIF" }]
+Line 10: PRINT "Website contains $search_term" -> Tokens: [Token { token_type: Command, value: "PRINT" }, Token { token_type: String, value: "Website contains $search_term" }]
+Line 11: PRINT "Writing to file..." -> Tokens: [Token { token_type: Command, value: "PRINT" }, Token { token_type: String, value: "Writing to file..." }]
+Line 12: !writef $filename $http_get_body -> Tokens: [Token { token_type: Macro, value: "!" }, Token { token_type: Identifier, value: "writef" }, Token { token_type: Variable, value: "$filename" }, Token { token_type: Variable, value: "$http_get_body" }]
+Line 13: MOV r0 $filename -> Tokens: [Token { token_type: Command, value: "MOV" }, Token { token_type: Identifier, value: "r0" }, Token { token_type: Variable, value: "$filename" }]
+Line 14: MOV r1 $http_get_body -> Tokens: [Token { token_type: Command, value: "MOV" }, Token { token_type: Identifier, value: "r1" }, Token { token_type: Variable, value: "$http_get_body" }]
+Line 15: LIBCALL writef -> Tokens: [Token { token_type: Command, value: "LIBCALL" }, Token { token_type: Identifier, value: "writef" }]
+Line 16: ENDFN -> Tokens: [Token { token_type: Command, value: "ENDFN" }]
+Line 17: PRINT "Enter the search term to check at $website:" -> Tokens: [Token { token_type: Command, value: "PRINT" }, Token { token_type: String, value: "Enter the search term to check at $website:" }]
+Line 18: INPUT search_term -> Tokens: [Token { token_type: Command, value: "INPUT" }, Token { token_type: Identifier, value: "search_term" }]
+Line 19: CALL search_website -> Tokens: [Token { token_type: Command, value: "CALL" }, Token { token_type: Identifier, value: "search_website" }]
 ```
 
 ## Language Syntax
