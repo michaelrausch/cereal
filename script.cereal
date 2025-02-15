@@ -17,7 +17,7 @@ FN ask_commit_changes DO
 
     -- Check if the user said yes
     IF $commit_changes IS $yes
-        PRINT "Commiting changes"
+        PRINT Commiting changes
         -- Library methods can (currently) be called
         -- by using the LIBCALL keyword. Arguments 
         -- are passed in registers.

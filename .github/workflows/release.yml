@@ -27,11 +27,25 @@ jobs:
     - name: Build Release
       run: cargo build --release
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install vsce
+      run: npm install -g @vscode/vsce
+
+    - name: Package VSCode Extension
+      run: |
+        cd language_support/vscode
+        vsce package
+
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
           ./target/release/cereal
+          ./language_support/vscode/*.vsix
         name: Release ${{ github.ref_name }}
         draft: false
         prerelease: false 
