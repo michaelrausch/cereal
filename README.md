@@ -45,10 +45,9 @@ CALL ask_commit_changes
 
 -- Get user input
 INPUT commit_changes
-EQ $commit_changes $yes
 
 -- Check if the user said yes
-IF $eq_result
+IF $commit_changes IS $yes
     -- Library methods can (currently) be called
     -- by using the LIBCALL keyword. Arguments 
     -- are passed in registers.
@@ -60,38 +59,6 @@ ENDIF
 -- End of program
 
 ```
-
-```
-
-      o8Oo./
-   ._o8o8o8Oo_.
-    \========/
-     `------'  CEREAL VM v0.1.0
-
-
-[VM] The VM is ready to go!
-[VM] Executing loaded instructions
-
-Name?
-Michael
-Hello, Michael! Welcome to planet Earth!
-Commit changes? (y/n)
-y
-On branch main
-Your branch is ahead of 'origin/main' by 3 commits.
-  (use "git push" to publish your local commits)
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   README.md
-        modified:   script.cereal
-        modified:   src/commands/input_cmd.rs
-        modified:   src/parser.rs
-
-no changes added to commit (use "git add" and/or "git commit -a")
-```
-
 
 ## Language Syntax
 
