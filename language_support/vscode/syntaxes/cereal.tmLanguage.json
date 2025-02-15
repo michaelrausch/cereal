@@ -1,0 +1,61 @@
+{
+    "name": "Cereal",
+    "scopeName": "source.cereal",
+    "fileTypes": ["cereal"],
+    "patterns": [
+        {
+            "name": "comment.line.cereal",
+            "match": "//.*$|--.*$"
+        },
+        {
+            "name": "support.function.cereal",
+            "match": "\\b(CALL|LIBCALL)\\b"
+        },
+        {
+            "name": "storage.type.cereal",
+            "match": "\\b(FN|DEF)\\b"
+        },
+        {
+            "name": "keyword.control.cereal",
+            "match": "\\b(IF|ENDIF|DO|ENDFN)\\b"
+        },
+        {
+            "name": "entity.name.function.cereal",
+            "match": "\\b(MOV|EQ)\\b"
+        },
+        {
+            "name": "constant.language.cereal",
+            "match": "\\$(r[0-9]|r10)\\b"
+        },
+        {
+            "name": "variable.name.cereal",
+            "match": "\\$[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        },
+        {
+            "name": "string.quoted.double.cereal",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                {
+                    "name": "constant.character.escape.cereal",
+                    "match": "\\\\."
+                }
+            ]
+        },
+        {
+            "name": "string.quoted.single.cereal",
+            "begin": "'",
+            "end": "'",
+            "patterns": [
+                {
+                    "name": "constant.character.escape.cereal",
+                    "match": "\\\\."
+                }
+            ]
+        },
+        {
+            "name": "constant.other.cereal",
+            "match": "\\b[A-Za-z_][a-zA-Z0-9_]*\\b"
+        }
+    ]
+} 

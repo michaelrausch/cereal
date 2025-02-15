@@ -1,0 +1,27 @@
+{
+    "name": "cereal-lang",
+    "displayName": "Cereal Language",
+    "description": "Syntax highlighting for Cereal language",
+    "version": "0.0.5",
+    "publisher": "StandardHQLimited",
+    "engines": {
+        "vscode": "^1.0.0"
+    },
+    "contributes": {
+        "languages": [
+            {
+                "id": "cereal",
+                "aliases": ["Cereal", "cereal"],
+                "extensions": [".cereal"],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "cereal",
+                "scopeName": "source.cereal",
+                "path": "./syntaxes/cereal.tmLanguage.json"
+            }
+        ]
+    }
+} 

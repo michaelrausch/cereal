@@ -1,0 +1,18 @@
+FN git_init DO
+    MOV r0 add
+    MOV r1 .
+    LIBCALL git
+ENDFN
+
+FN git_init DO
+    MOV r0 add
+    MOV r1 .
+    LIBCALL git
+ENDFN
+
+DEF name Michael
+
+EQ $name Michael
+IF $eq_result
+    CALL git_init
+ENDIF

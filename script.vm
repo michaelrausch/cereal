@@ -1,0 +1,4 @@
+DEF name michael
+DEF greeting "Hello from IF block!"
+EXEC echo $greeting
+EXEC echo Hello, world!
