@@ -22,72 +22,6 @@ Cereal is a simple scripting language (currently in development) that supports:
 - Library function calls
 - Input/output operations
 
-## Language Syntax
-
-### Constants
-```
-DEF <name> <value>
-```
-Constants can be used in expressions by prefixing them with `$`
-
-### Functions 
-```
-FN <name> DO
-    ...
-ENDFN
-
-CALL <name>
-```
-
-### IF
-```
-IF <condition>
-    ...
-ENDIF
-```
-
-Condition must equal TRUE
-
-
-### EQ / NEQ
-```
-EQ <left> <right>
-NEQ <left> <right>
-```
-
-EQ and NEQ store the result in the `eq_result` register.
-
-### MOV
-```
-MOV <register> <value>
-```
-Values stored in registers are used as arguments for library / VM calls.
-
-### LIBCALL
-```
-LIBCALL <name>
-```
-Calls a library function. You can pass arguments in registers.
-
-### INPUT
-```
-INPUT <variable>
-```
-Reads user input and stores it in the specified variable.
-
-### PRINT
-```
-PRINT <value>
-```
-Prints a value to the console.
-
-### EXEC
-``` 
-EXEC <command>
-```
-Executes a command on the host machine.
-
-
 ## Sample Program
 ```
 -- Constants Section
@@ -158,6 +92,71 @@ Changes not staged for commit:
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
+
+## Language Syntax
+
+### Constants
+```
+DEF <name> <value>
+```
+Constants can be used in expressions by prefixing them with `$`
+
+### Functions 
+```
+FN <name> DO
+    ...
+ENDFN
+
+CALL <name>
+```
+
+### IF
+```
+IF <condition>
+    ...
+ENDIF
+```
+
+Condition must equal TRUE
+
+
+### EQ / NEQ
+```
+EQ <left> <right>
+NEQ <left> <right>
+```
+
+EQ and NEQ store the result in the `eq_result` register.
+
+### MOV
+```
+MOV <register> <value>
+```
+Values stored in registers are used as arguments for library / VM calls.
+
+### LIBCALL
+```
+LIBCALL <name>
+```
+Calls a library function. You can pass arguments in registers.
+
+### INPUT
+```
+INPUT <variable>
+```
+Reads user input and stores it in the specified variable.
+
+### PRINT
+```
+PRINT <value>
+```
+Prints a value to the console.
+
+### EXEC
+``` 
+EXEC <command>
+```
+Executes a command on the host machine.
 
 
 ## Contributing
