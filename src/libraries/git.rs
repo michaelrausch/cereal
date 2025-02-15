@@ -3,13 +3,11 @@ use std::process::Command;
 use crate::command::ExecutionContext;
 
 
-pub struct Git {
-    name: String,
-}
+pub struct Git {}
 
 impl Git {
-    pub fn new(name: String) -> Self {
-        Git { name }
+    pub fn new() -> Self {
+        Git { }
     }
 }
 

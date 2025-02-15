@@ -1,15 +1,11 @@
-use std::process::Command;
-
 use crate::command::ExecutionContext;
 
 
-pub struct HttpGet {
-    name: String,
-}
+pub struct HttpGet {}
 
 impl HttpGet {
-    pub fn new(name: String) -> Self {
-        HttpGet { name }
+    pub fn new() -> Self {
+        HttpGet {}
     }
 }
 

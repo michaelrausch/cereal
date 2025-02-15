@@ -10,8 +10,8 @@ impl LibraryExecutor {
 
     pub fn execute(&self, name: &str, context: &mut ExecutionContext) -> Result<(), String> {
         match name {
-            "git" => git::Git::new(name.to_string()).execute(context),
-            "httpget" => httpget::HttpGet::new(name.to_string()).execute(context),
+            "git" => git::Git::new().execute(context),
+            "httpget" => httpget::HttpGet::new().execute(context),
             _ => Err(format!("Library '{}' not found", name)),
         }
     }

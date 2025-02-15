@@ -2,9 +2,6 @@
 
 use crate::command::Command;
 use crate::parser::Parser;
-use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
 use crate::command::ExecutionContext;
 use std::collections::HashMap;
 
@@ -12,6 +9,9 @@ pub struct VM {
     commands: Vec<Box<dyn Command>>,
     context: ExecutionContext<'static>,
     parser: Parser,
+    #[cfg(test)]
+    pub functions: HashMap<String, Vec<String>>,  // Make public for tests
+    #[cfg(not(test))]
     functions: HashMap<String, Vec<String>>,
     call_stack: Vec<usize>,
     current_line: usize,
@@ -86,25 +86,13 @@ impl VM {
         Ok(())
     }
 
-    #[allow(dead_code)]
-    pub fn load_file<P: AsRef<Path>>(&mut self, path: P) -> Result<(), String> {
-        let file = File::open(path).map_err(|e| format!("Failed to open file: {}", e))?;
-        let reader = io::BufReader::new(file);
-        let mut parser = Parser::new();
-
-        for line in reader.lines() {
-            let line = line.map_err(|e| format!("Failed to read line: {}", e))?;
-            if let Some(command) = parser.parse_line(&line)? {
-                self.add_command(command);
-            }
-        }
-        Ok(())
-    }
-
+    /// Adds a command to the VM's command list for later execution.
     pub fn add_command(&mut self, command: Box<dyn Command>) {
         self.commands.push(command);
     }
 
+    /// Executes a single instruction line immediately.
+    /// Useful for direct command execution outside of normal program flow.
     #[allow(dead_code)]
     pub fn execute_instruction(&mut self, instruction: &str) -> Result<(), String> {
         let mut parser = Parser::new();
@@ -114,39 +102,16 @@ impl VM {
         Ok(())
     }
 
+    /// Loads and parses a script from a string, processing each line.
+    /// Returns an error if there are any parsing issues or unclosed function definitions.
     pub fn load_string(&mut self, script: &str) -> Result<(), String> {
-        let mut parser = Parser::new();
+        let parser = Parser::new();
         self.parser = parser.clone();
         
         for line in script.lines() {
             let line = line.trim();
             if !line.is_empty() {
-                if let Some(command) = parser.parse_line(line)? {
-                    match command.name() {
-                        "FN" => {
-                            // Start collecting function body
-                            let name = parser.get_last_args().unwrap_or_default()[1].clone();
-                            self.current_fn = Some((name, Vec::new()));
-                        }
-                        "ENDFN" => {
-                            // End function definition and store it
-                            if let Some((name, body)) = self.current_fn.take() {
-                                self.define_function(&name, body)?;
-                            } else {
-                                return Err("ENDFN without matching FN".to_string());
-                            }
-                        }
-                        _ => {
-                            if let Some((_, ref mut body)) = self.current_fn {
-                                // If we're in a function definition, add to body
-                                body.push(line.to_string());
-                            } else {
-                                // Otherwise add to normal commands
-                                self.add_command(command);
-                            }
-                        }
-                    }
-                }
+                self.process_line(line)?;
             }
         }
 
@@ -157,11 +122,68 @@ impl VM {
         Ok(())
     }
 
+    /// Processes a single line of code, parsing it into a command and handling it.
+    /// Returns an error if parsing or command handling fails.
+    fn process_line(&mut self, line: &str) -> Result<(), String> {
+        if let Some(command) = self.parser.parse_line(line)? {
+            self.handle_command(command, line)?;
+        }
+        Ok(())
+    }
+
+    /// Routes a command to its appropriate handler based on the command name.
+    /// Special handling for FN and ENDFN commands, with all others treated as regular commands.
+    fn handle_command(&mut self, command: Box<dyn Command>, line: &str) -> Result<(), String> {
+        match command.name() {
+            "FN" => self.handle_fn_start(),
+            "ENDFN" => self.handle_fn_end(),
+            _ => self.handle_regular_command(command, line),
+        }
+    }
+
+    /// Handles the start of a function definition (FN command).
+    /// Creates a new function context with the given name and empty body.
+    fn handle_fn_start(&mut self) -> Result<(), String> {
+        let name = self.parser.get_last_args().unwrap_or_default()[1].clone();
+        self.current_fn = Some((name, Vec::new()));
+        Ok(())
+    }
+
+    /// Handles the end of a function definition (ENDFN command).
+    /// Stores the collected function body if there is a matching FN,
+    /// otherwise returns an error.
+    fn handle_fn_end(&mut self) -> Result<(), String> {
+        if let Some((name, body)) = self.current_fn.take() {
+            self.define_function(&name, body)
+        } else {
+            Err("ENDFN without matching FN".to_string())
+        }
+    }
+
+    /// Handles regular commands (non-FN/ENDFN).
+    /// If inside a function definition, adds the command to the function body.
+    /// Otherwise, adds it to the main command list for execution.
+    fn handle_regular_command(&mut self, command: Box<dyn Command>, line: &str) -> Result<(), String> {
+        if let Some((_, ref mut body)) = self.current_fn {
+            // If we're in a function definition, add to body
+            body.push(line.to_string());
+        } else {
+            // Otherwise add to normal commands
+            self.add_command(command);
+        }
+        Ok(())
+    }
+
+    /// Defines a new function with the given name and body.
+    /// Stores the function in the VM's function map for later execution.
     pub fn define_function(&mut self, name: &str, body: Vec<String>) -> Result<(), String> {
         self.functions.insert(name.to_string(), body);
         Ok(())
     }
 
+    /// Calls a previously defined function by name.
+    /// Executes each line in the function's body, maintaining the call stack for proper returns.
+    /// Returns an error if the function is not found.
     pub fn call_function(&mut self, name: &str) -> Result<(), String> {
         let body = self.functions.get(name).ok_or_else(|| {
             format!("Function '{}' not found", name)

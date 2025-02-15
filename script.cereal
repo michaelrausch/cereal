@@ -29,6 +29,10 @@ FN ask_commit_changes DO
 ENDFN
 
 FN do_a_http_request DO 
+    -- As of 1.0.8, you can use a !macro to call a library method.
+    -- so you can do: !httpget https://mkl.gg/ and this will expand to
+    -- MOV r0 https://mkl.gg/
+    -- LIBCALL httpget
     MOV r0 https://mkl.gg/
     LIBCALL httpget
 
@@ -36,7 +40,7 @@ FN do_a_http_request DO
         PRINT Website contains my github link
     ENDIF
 
-    IF $http_get_body NOTCONTAINS $youtube_link
+    IF $http_get_body CONTAINS $youtube_link
         ABORT Website does not contain my youtube link
     ENDIF
 ENDFN
@@ -45,3 +49,4 @@ ENDFN
 CALL print_hello_world
 CALL ask_commit_changes
 CALL do_a_http_request
+

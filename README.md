@@ -67,6 +67,22 @@ FN do_a_http_request DO
     ENDIF
 ENDFN
 
+FN do_a_http_request_but_with_macros DO 
+    -- Macros added in 1.0.8
+    !httpget https://mkl.gg/
+    -- this will expand to:
+    -- MOV r0 https://mkl.gg/
+    -- LIBCALL httpget
+
+    IF $http_get_body CONTAINS $github_link 
+        PRINT Website contains my github link
+    ENDIF
+
+    IF $http_get_body NOTCONTAINS $youtube_link
+        ABORT Website does not contain my youtube link
+    ENDIF
+ENDFN
+
 -- Main Section
 CALL print_hello_world
 CALL ask_commit_changes

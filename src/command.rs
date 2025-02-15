@@ -97,11 +97,6 @@ impl<'a> ExecutionContext<'a> {
         result
     }
 
-    // Get a clone of the current arguments
-    pub fn get_current_args(&self) -> Vec<String> {
-        self.args.clone()
-    }
-
     // Set which command to skip until
     pub fn set_skip_until(&mut self, command: &str) {
         self.skip_until = Some(command.to_string());
@@ -127,5 +122,34 @@ impl<'a> ExecutionContext<'a> {
     // Add these methods to access the VM
     pub fn get_vm(&mut self) -> &mut VM {
         self.vm.as_mut().expect("VM not initialized")
+    }
+}
+
+pub struct MultiCommand {
+    commands: Vec<Box<dyn Command>>,
+}
+
+impl MultiCommand {
+    pub fn new(commands: Vec<Box<dyn Command>>) -> Self {
+        Self { commands }
+    }
+}
+
+impl Command for MultiCommand {
+    fn execute(&self, context: &mut ExecutionContext) -> Result<(), String> {
+        for command in &self.commands {
+            command.execute(context)?;
+        }
+        Ok(())
+    }
+
+    fn name(&self) -> &str {
+        "MULTI"
+    }
+
+    fn box_clone(&self) -> Box<dyn Command> {
+        Box::new(MultiCommand {
+            commands: self.commands.iter().map(|cmd| cmd.box_clone()).collect()
+        })
     }
 } 

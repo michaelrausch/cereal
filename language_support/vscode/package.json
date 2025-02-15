@@ -2,7 +2,7 @@
     "name": "cereal-lang",
     "displayName": "Cereal Language",
     "description": "Syntax highlighting for Cereal language",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "publisher": "StandardHQLimited",
     "repository": {
         "type": "git",
