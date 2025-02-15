@@ -43,13 +43,18 @@ impl Git {
                 .map_err(|e| format!("Failed to execute git command: {}", e))?
         };
 
-        // Handle command output
-        if !output.stdout.is_empty() {
-            print!("{}", String::from_utf8_lossy(&output.stdout));
+        // Convert output to string and store in context
+        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+        let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+        
+        // Store output in exec_stdout variable
+        context.set_variable("exec_stdout".to_string(), stdout);
+        
+        // Print stderr if any
+        if !stderr.is_empty() {
+            eprint!("{}", stderr);
         }
-        if !output.stderr.is_empty() {
-            eprint!("{}", String::from_utf8_lossy(&output.stderr));
-        }
+        
         if !output.status.success() {
             return Err(format!("Git command failed with exit code: {}", output.status));
         }

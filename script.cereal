@@ -19,16 +19,16 @@ CALL ask_commit_changes
 
 -- Get user input
 INPUT commit_changes
-EQ $commit_changes $yes
 
 -- Check if the user said yes
-IF $eq_result
+IF $commit_changes NOT $yes
     -- Library methods can (currently) be called
     -- by using the LIBCALL keyword. Arguments 
     -- are passed in registers.
-    MOV r0 commit
-    MOV r1 -m "Changes"
+    MOV r0 status
+    MOV r1 .
     LIBCALL git
+    PRINT $exec_stdout
 ENDIF
 
 -- End of program

@@ -1,8 +1,6 @@
 use crate::command::{Command, ExecutionContext};
 use std::io::{self, Write};
 
-use super::print;
-
 pub struct InputCommand {
     var: String
 }

@@ -90,6 +90,7 @@ impl<'a> ExecutionContext<'a> {
     // Expand variables in a string (e.g., $var becomes the value of var)
     pub fn expand_variables(&self, input: &str) -> String {
         let mut result = input.to_string();
+
         for (key, value) in &self.variables {
             result = result.replace(&format!("${}", key), value);
         }

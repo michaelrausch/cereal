@@ -1,31 +1,26 @@
 use crate::command::{Command, ExecutionContext};
 
 pub struct IfCommand {
+    expected_value: String,
     condition_var: String,  // Name of the variable to check
+    operator: String,
 }
 
 impl IfCommand {
-    pub fn new(condition_var: String) -> Self {
-        // Remove the $ if it exists at the start
-        let var_name = if condition_var.starts_with('$') {
-            condition_var[1..].to_string()
-        } else {
-            condition_var
-        };
-        Self { condition_var: var_name }
+    pub fn new(expected_value: String, condition_var: String, operator: String) -> Self {
+        Self { expected_value, condition_var, operator }
     }
 }
 
 impl Command for IfCommand {
     fn execute(&self, context: &mut ExecutionContext) -> Result<(), String> {
-        // Get the value of the condition variable
-        let condition_value = context.variables
-            .get(&self.condition_var)
-            .cloned()
-            .unwrap_or_default();
+        let condition_value = context.expand_variables(&self.condition_var);
+        let expected_value = context.expand_variables(&self.expected_value);
 
         // Set the skip flag in the context based on the condition
-        if condition_value != "TRUE" {
+        if self.operator == "IS" && condition_value != expected_value {
+            context.set_skip_until("ENDIF");
+        } else if self.operator == "NOT" && condition_value == expected_value {
             context.set_skip_until("ENDIF");
         }
         
@@ -41,7 +36,7 @@ impl Command for IfCommand {
     }
 
     fn box_clone(&self) -> Box<dyn Command> {
-        Box::new(IfCommand::new(self.condition_var.clone()))
+        Box::new(IfCommand::new(self.expected_value.clone(), self.condition_var.clone(), self.operator.clone()))
     }
 }
 

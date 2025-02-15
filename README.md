@@ -112,7 +112,7 @@ CALL <name>
 
 ### IF
 ```
-IF <condition>
+IF <condition> IS <value>
     ...
 ENDIF
 ```

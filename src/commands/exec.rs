@@ -32,15 +32,27 @@ impl Command for ExecCommand {
         };
 
         // Handle command output
-        if !output.stdout.is_empty() {
-            print!("{}", String::from_utf8_lossy(&output.stdout));
-        }
+        let stdout_value = if !output.stdout.is_empty() {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            print!("{}", stdout);
+            stdout.to_string()
+        } else {
+            String::new()
+        };
+        
+        // Always set stdout and status, even if empty
+        context.set_variable("exec_stdout".to_string(), stdout_value);
+        
         if !output.stderr.is_empty() {
             eprint!("{}", String::from_utf8_lossy(&output.stderr));
         }
         if !output.status.success() {
+            // Set the status before returning the error
+            context.set_variable("exec_status".to_string(), output.status.to_string());
             return Err(format!("Command failed with exit code: {}", output.status));
         }
+
+        context.set_variable("exec_status".to_string(), output.status.to_string());
 
         Ok(())
     }

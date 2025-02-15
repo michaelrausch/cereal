@@ -50,10 +50,10 @@ impl CommandRegistry {
         });
 
         registry.register("IF", "IF", |args| {
-            if args.is_empty() {
+            if args.len() != 3 || (args[1] != "IS" && args[1] != "NOT") {
                 return Err("IF requires a condition variable".to_string());
             }
-            Ok(Box::new(IfCommand::new(args[0].to_string())))
+            Ok(Box::new(IfCommand::new(args[2].to_string(), args[0].to_string(), args[1].to_string())))
         });
 
         registry.register("ENDIF", "ENDIF", |_| {
