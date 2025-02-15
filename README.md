@@ -24,9 +24,11 @@ Cereal is a simple scripting language (currently in development) that supports:
 
 ## Sample Program
 ```
+-- Constants Section
 DEF planet Earth
 DEF yes y
 
+-- Functions Section    
 FN print_hello_world DO
     PRINT Name?
     INPUT name
@@ -37,16 +39,15 @@ FN ask_commit_changes DO
     PRINT Commit changes? (y/n)
 ENDFN
 
--- Print a hello world message
+-- Main Section
 CALL print_hello_world
-
--- Ask if we should commit changes
 CALL ask_commit_changes
-INPUT commit_changes
 
--- Check if the user said yes
+-- Get user input
+INPUT commit_changes
 EQ $commit_changes $yes
 
+-- Check if the user said yes
 IF $eq_result
     -- Library methods can (currently) be called
     -- by using the LIBCALL keyword. Arguments 
@@ -55,6 +56,8 @@ IF $eq_result
     MOV r1 -m "Changes"
     LIBCALL git
 ENDIF
+
+-- End of program
 
 ```
 
