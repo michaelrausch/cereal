@@ -4,7 +4,7 @@ Cereal is an experimental scripting language interpreter written in Rust. This p
 
 ## Installation
 
-You can download the latest binary from the [releases page](https://github.com/yourusername/cereal/releases).
+You can download the latest binary from the [releases page](https://github.com/michaelrausch/cereal/releases).
 
 ## Usage
 
