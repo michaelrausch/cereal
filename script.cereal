@@ -1,18 +1,31 @@
-FN git_init DO
-    MOV r0 add
-    MOV r1 .
-    LIBCALL git
+DEF planet Earth
+DEF yes y
+
+FN print_hello_world DO
+    PRINT Name?
+    INPUT name
+    PRINT Hello, $name! Welcome to planet $planet!
 ENDFN
 
-FN git_init DO
-    MOV r0 add
-    MOV r1 .
-    LIBCALL git
+FN ask_commit_changes DO 
+    PRINT Commit changes? (y/n)
 ENDFN
 
-DEF name Michael
+-- Print a hello world message
+CALL print_hello_world
 
-EQ $name Michael
+-- Ask if we should commit changes
+CALL ask_commit_changes
+INPUT commit_changes
+
+-- Check if the user said yes
+EQ $commit_changes $yes
+
 IF $eq_result
-    CALL git_init
+    -- Library methods can (currently) be called
+    -- by using the LIBCALL keyword. Arguments 
+    -- are passed in registers.
+    MOV r0 commit
+    MOV r1 -m "Changes"
+    LIBCALL git
 ENDIF

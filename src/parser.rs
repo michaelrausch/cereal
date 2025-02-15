@@ -25,7 +25,7 @@ impl Parser {
         });
 
         registry.register("MOV", "MOV", |args| {
-            if args.len() != 2 {
+            if args.len() < 2 {
                 return Err("MOV requires two arguments".to_string());
             }
             Ok(Box::new(MovCommand::new(
