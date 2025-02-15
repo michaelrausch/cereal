@@ -14,7 +14,12 @@ impl LibCallCommand {
 
 impl Command for LibCallCommand {
     fn execute(&self, context: &mut ExecutionContext) -> Result<(), String> {
-        let _ = LibraryExecutor::new().execute(&self.name, context);
+        let res = LibraryExecutor::new().execute(&self.name, context);
+
+        if let Err(e) = res {
+            return Err(e);
+        }
+
         Ok(())
     }
 

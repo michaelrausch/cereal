@@ -17,14 +17,19 @@ impl Command for IfCommand {
         let condition_value = context.expand_variables(&self.condition_var);
         let expected_value = context.expand_variables(&self.expected_value);
 
+        // Clear any existing skip state before evaluating new condition
+        context.clear_skip();
+
         // Set the skip flag in the context based on the condition
-        if self.operator == "IS" && condition_value != expected_value {
-            context.set_skip_until("ENDIF");
-        } else if self.operator == "NOT" && condition_value == expected_value {
-            context.set_skip_until("ENDIF");
-        } else if self.operator == "CONTAINS" && !condition_value.contains(&expected_value) {
-            context.set_skip_until("ENDIF");
-        } else if self.operator == "NOTCONTAINS" && condition_value.contains(&expected_value) {
+        let should_skip = match self.operator.as_str() {
+            "IS" => condition_value != expected_value,
+            "NOT" => condition_value == expected_value,
+            "CONTAINS" => !condition_value.contains(&expected_value),
+            "NOTCONTAINS" => condition_value.contains(&expected_value),
+            _ => return Err(format!("Unknown operator: {}", self.operator))
+        };
+
+        if should_skip {
             context.set_skip_until("ENDIF");
         }
         

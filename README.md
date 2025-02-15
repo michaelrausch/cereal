@@ -27,6 +27,8 @@ Cereal is a simple scripting language (currently in development) that supports:
 -- Constants Section
 DEF planet Earth
 DEF yes y
+DEF github_link https://github.com/michaelrausch
+DEF youtube_link https://youtube.com/michaelrausch
 
 -- Functions Section    
 FN print_hello_world DO
@@ -37,26 +39,38 @@ ENDFN
 
 FN ask_commit_changes DO 
     PRINT Commit changes? (y/n)
+    INPUT commit_changes
+
+    -- Check if the user said yes
+    IF $commit_changes IS $yes
+        PRINT "Commiting changes"
+        -- Library methods can (currently) be called
+        -- by using the LIBCALL keyword. Arguments 
+        -- are passed in registers.
+        MOV r0 status
+        MOV r1 .
+        LIBCALL git
+        PRINT $exec_stdout
+    ENDIF
+ENDFN
+
+FN do_a_http_request DO 
+    MOV r0 https://mkl.gg/
+    LIBCALL httpget
+
+    IF $http_get_body CONTAINS $github_link 
+        PRINT Website contains my github link
+    ENDIF
+
+    IF $http_get_body NOTCONTAINS $youtube_link
+        ABORT Website does not contain my youtube link
+    ENDIF
 ENDFN
 
 -- Main Section
 CALL print_hello_world
 CALL ask_commit_changes
-
--- Get user input
-INPUT commit_changes
-
--- Check if the user said yes
-IF $commit_changes IS $yes
-    -- Library methods can (currently) be called
-    -- by using the LIBCALL keyword. Arguments 
-    -- are passed in registers.
-    MOV r0 commit
-    MOV r1 -m "Changes"
-    LIBCALL git
-ENDIF
-
--- End of program
+CALL do_a_http_request
 
 ```
 
@@ -94,6 +108,7 @@ NEQ <left> <right>
 ```
 
 EQ and NEQ store the result in the `eq_result` register.
+Note: probably not needed now that we can do better comparisons within IF statements.
 
 ### MOV
 ```
@@ -112,6 +127,12 @@ Calls a library function. You can pass arguments in registers.
 INPUT <variable>
 ```
 Reads user input and stores it in the specified variable.
+
+### ABORT
+```
+ABORT <message>
+```
+Aborts the program with the specified message.
 
 ### PRINT
 ```

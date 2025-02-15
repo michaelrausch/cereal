@@ -172,7 +172,12 @@ impl VM {
         
         // Execute function body
         for line in body {
-            self.execute_line(&line)?;
+            if let Some(command) = self.parser.parse_line(&line)? {
+                // Check if we should skip this command
+                if !self.context.should_skip(command.name()) || command.is_control_flow() {
+                    command.execute(&mut self.context)?;
+                }
+            }
         }
 
         // Restore position
