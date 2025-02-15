@@ -5,11 +5,11 @@
     "patterns": [
         {
             "name": "comment.line.cereal",
-            "match": "//.*$|--.*$"
+            "match": "--.*$"
         },
         {
             "name": "support.function.cereal",
-            "match": "\\b(CALL|LIBCALL)\\b"
+            "match": "\\b(CALL|LIBCALL|INPUT|ABORT|PRINT|EXEC)\\b"
         },
         {
             "name": "storage.type.cereal",
@@ -17,15 +17,19 @@
         },
         {
             "name": "keyword.control.cereal",
-            "match": "\\b(IF|ENDIF|DO|ENDFN)\\b"
+            "match": "\\b(IF|ENDIF|DO|ENDFN|IS|NOT|CONTAINS|NOTCONTAINS)\\b"
         },
         {
             "name": "entity.name.function.cereal",
-            "match": "\\b(MOV|EQ)\\b"
+            "match": "\\b(MOV|EQ|NEQ)\\b"
         },
         {
             "name": "constant.language.cereal",
-            "match": "\\$(r[0-9]|r10)\\b"
+            "match": "\\b(TRUE)\\b"
+        },
+        {
+            "name": "constant.language.register.cereal",
+            "match": "\\$(r[0-9]|r10|eq_result)\\b"
         },
         {
             "name": "variable.name.cereal",

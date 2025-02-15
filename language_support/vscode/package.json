@@ -2,8 +2,12 @@
     "name": "cereal-lang",
     "displayName": "Cereal Language",
     "description": "Syntax highlighting for Cereal language",
-    "version": "0.0.5",
+    "version": "1.0.6",
     "publisher": "StandardHQLimited",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/michaelrausch/cereal"
+    },
     "engines": {
         "vscode": "^1.0.0"
     },
