@@ -22,6 +22,10 @@ impl Command for IfCommand {
             context.set_skip_until("ENDIF");
         } else if self.operator == "NOT" && condition_value == expected_value {
             context.set_skip_until("ENDIF");
+        } else if self.operator == "CONTAINS" && !condition_value.contains(&expected_value) {
+            context.set_skip_until("ENDIF");
+        } else if self.operator == "NOTCONTAINS" && condition_value.contains(&expected_value) {
+            context.set_skip_until("ENDIF");
         }
         
         Ok(())

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use crate::command::Command;
-use crate::commands::{DefCommand, ExecCommand, NpmCommand, IfCommand, EndIfCommand, PrintCommand};
+use crate::commands::{DefCommand, ExecCommand, NpmCommand, IfCommand, EndIfCommand, PrintCommand, AbortCommand};
 
 
 // Create a wrapper struct that implements Clone
@@ -50,7 +50,7 @@ impl CommandRegistry {
         });
 
         registry.register("IF", "IF", |args| {
-            if args.len() != 3 || (args[1] != "IS" && args[1] != "NOT") {
+            if args.len() != 3 || (args[1] != "IS" && args[1] != "NOT" && args[1] != "CONTAINS" && args[1] != "NOTCONTAINS") {
                 return Err("IF requires a condition variable".to_string());
             }
             Ok(Box::new(IfCommand::new(args[2].to_string(), args[0].to_string(), args[1].to_string())))
@@ -58,6 +58,10 @@ impl CommandRegistry {
 
         registry.register("ENDIF", "ENDIF", |_| {
             Ok(Box::new(EndIfCommand))
+        });
+
+        registry.register("ABORT", "ABORT", |args| {
+            Ok(Box::new(AbortCommand::new(args.join(" "))))
         });
 
         registry.register("PRINT", "PRINT", |args| {

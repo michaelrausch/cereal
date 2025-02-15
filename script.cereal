@@ -21,7 +21,7 @@ CALL ask_commit_changes
 INPUT commit_changes
 
 -- Check if the user said yes
-IF $commit_changes NOT $yes
+IF $commit_changes CONTAINS yes
     -- Library methods can (currently) be called
     -- by using the LIBCALL keyword. Arguments 
     -- are passed in registers.

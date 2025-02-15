@@ -79,7 +79,7 @@ CALL <name>
 
 ### IF
 ```
-IF <a> IS/NOT <b>
+IF <a> IS/NOT/CONTAINS/NOTCONTAINS <b>
     ...
 ENDIF
 ```
